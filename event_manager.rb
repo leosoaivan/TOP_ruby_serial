@@ -23,7 +23,16 @@ def save_thank_you_letters(id,form_letter)
 end
 
 def clean_phone(phone)
-  phone.gsub(/[^0-9]/, "")
+  new_phone = phone.to_s.gsub(/[^0-9]/, "")
+  if new_phone.length < 10
+    return "Bad number"
+  elsif new_phone.length > 11
+    return "Bad number"
+  elsif new_phone.length == 11 && new_phone[0] == "1"
+    return new_phone[1..-1]
+  else
+    return new_phone
+  end
 end
 
 puts "EventManager initialized."
