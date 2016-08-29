@@ -1,3 +1,3 @@
-# TOP_ruby_serial
+# Project: Serialization and Working with Files
 
-An exercise on Serialization and working with files, as read on JumpstartLab at http://tutorials.jumpstartlab.com/projects/eventmanager.html#eventmanager
+A TOP (The Odin Project) exercise on serialization and working with files, as read on JumpstartLab: http://tutorials.jumpstartlab.com/projects/eventmanager.html#eventmanager
