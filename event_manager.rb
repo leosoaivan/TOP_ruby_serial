@@ -22,6 +22,10 @@ def save_thank_you_letters(id,form_letter)
   end
 end
 
+def clean_phone(phone)
+  phone.gsub(/[^0-9]/, "")
+end
+
 puts "EventManager initialized."
 
 contents = CSV.open 'event_attendees.csv', headers: true, header_converters: :symbol
@@ -32,12 +36,14 @@ erb_template = ERB.new template_letter
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
-
   zipcode = clean_zipcode(row[:zipcode])
+  phone = clean_phone(row[:homephone])
 
   legislators = legislators_by_zipcode(zipcode)
 
-  form_letter = erb_template.result(binding)
+  puts "#{phone}"
 
-  save_thank_you_letters(id, form_letter)
+  #form_letter = erb_template.result(binding)
+
+  #save_thank_you_letters(id, form_letter)
 end
