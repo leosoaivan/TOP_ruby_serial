@@ -24,14 +24,12 @@ end
 
 def clean_phone(phone)
   new_phone = phone.to_s.gsub(/[^0-9]/, "")
-  if new_phone.length < 10
-    return "Bad number"
-  elsif new_phone.length > 11
-    return "Bad number"
+  if new_phone.length == 10
+    return new_phone
   elsif new_phone.length == 11 && new_phone[0] == "1"
     return new_phone[1..-1]
   else
-    return new_phone
+    return "Bad Number"
   end
 end
 
