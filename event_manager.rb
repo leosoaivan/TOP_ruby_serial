@@ -1,6 +1,7 @@
 require 'csv'
 require 'sunlight/congress'
 require 'erb'
+require 'date'
 
 Sunlight::Congress.api_key = "e179a6973728c4dd3fb1204283aaccb5"
 
@@ -33,6 +34,19 @@ def clean_phone(phone)
   end
 end
 
+def target_hour(regdate)
+  d = DateTime.strptime(regdate, '%m/%d/%y %H:%M')
+  d.hour
+end
+
+def hour_frequency(hours)
+  hour_freq = hours.inject(Hash.new(0)) { |h,v| h[v] += 1; h }
+  best_hour = hours.max_by { |v| hour_freq[v] }
+  #h = DateTime.strptime(best_hour.to_s, '%H')
+  puts "The best time for advertisement is #{best_hour}:00"
+  puts "With #{hour_freq[best_hour]} registration(s) at that time for the previous conference."
+end
+
 puts "EventManager initialized."
 
 contents = CSV.open 'event_attendees.csv', headers: true, header_converters: :symbol
@@ -40,17 +54,24 @@ contents = CSV.open 'event_attendees.csv', headers: true, header_converters: :sy
 template_letter = File.read "form_letter.erb"
 erb_template = ERB.new template_letter
 
+hours = []
+
 contents.each do |row|
   id = row[0]
   name = row[:first_name]
   zipcode = clean_zipcode(row[:zipcode])
-  phone = clean_phone(row[:homephone])
-
   legislators = legislators_by_zipcode(zipcode)
+  phone = clean_phone(row[:homephone])
+  hour = target_hour(row[:regdate])
+  hours << target_hour(row[:regdate])
 
-  puts "#{phone}"
+  puts "#{hour}"
+
+  #puts "#{phone}"
 
   #form_letter = erb_template.result(binding)
 
   #save_thank_you_letters(id, form_letter)
 end
+
+hour_frequency(hours)
