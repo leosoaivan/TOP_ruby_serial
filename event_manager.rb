@@ -34,9 +34,8 @@ def clean_phone(phone)
   end
 end
 
-def target_hour(regdate)
+def target_DateTime(regdate)
   d = DateTime.strptime(regdate, '%m/%d/%y %H:%M')
-  d.hour
 end
 
 def hour_frequency(hours)
@@ -47,6 +46,12 @@ def hour_frequency(hours)
   puts "With #{hour_freq[best_hour]} registration(s) at that time for the previous conference."
 end
 
+def day_frequency(days)
+  day_freq = days.inject(Hash.new(0)) { |h,v| h[v] += 1; h }
+  best_day = days.max_by { |v| day_freq[v] }
+  puts "Most people registered on a #{best_day.strftime('%A')}."
+end
+
 puts "EventManager initialized."
 
 contents = CSV.open 'event_attendees.csv', headers: true, header_converters: :symbol
@@ -55,6 +60,7 @@ template_letter = File.read "form_letter.erb"
 erb_template = ERB.new template_letter
 
 hours = []
+days = []
 
 contents.each do |row|
   id = row[0]
@@ -62,12 +68,12 @@ contents.each do |row|
   zipcode = clean_zipcode(row[:zipcode])
   legislators = legislators_by_zipcode(zipcode)
   phone = clean_phone(row[:homephone])
-  hour = target_hour(row[:regdate])
-  hours << target_hour(row[:regdate])
+  d = target_DateTime(row[:regdate])
 
-  puts "#{hour}"
+  hours << d.hour
+  days << d
 
-  #puts "#{phone}"
+  puts "#{name}, #{phone}"
 
   #form_letter = erb_template.result(binding)
 
@@ -75,3 +81,4 @@ contents.each do |row|
 end
 
 hour_frequency(hours)
+day_frequency(days)
